@@ -5,7 +5,9 @@ import {
     View,
     TouchableOpacity,
     Image,
-    Modal
+    Modal,
+    BackHandler,
+    ScrollView
 } from 'react-native'
 
 import ImageViewer from 'react-native-image-zoom-viewer'
@@ -16,9 +18,7 @@ class ImageSlider extends Component {
     constructor(props) {
         super(props)
 
-        const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
         this.state =  {
-            dataSource: ds.cloneWithRows(this.props.objects),
             selectedIndex: 0,
             showModal: false,
             initialPage: 0,
@@ -33,15 +33,28 @@ class ImageSlider extends Component {
             })
         }
         console.disableYellowBox = true;
+
+        BackHandler.addEventListener("hardwareBackPress", () => {
+            if (this.state.showModal == true) {
+                this.hideModal();
+                return false;
+            }
+            return false;
+        })
     } 
 
     render() {
         return (
             <View>
-                <ListView style={styles.container} horizontal = {true} showsHorizontalScrollIndicator={false}
-                dataSource={this.state.dataSource} 
-                renderRow={(rowData, sectionID, rowID) => this.renderObject(rowData, rowID)}
-                />
+                <ScrollView style={{flexDirection:'row', width: '100%', height: 120}} horizontal={true} showsHorizontalScrollIndicator={false}>
+                {
+                    this.props.objects.map((data, index) => {
+                        console.disableYellowBox = true;
+                        return (this.renderObject(data, index) );
+                    })
+                }
+                </ScrollView>
+
                 <Modal visible={this.state.showModal} transparent={true}>
                     <Gallery style={styles.gallery}
                         images={imagesForGallery}
@@ -89,6 +102,7 @@ const styles = {
         margin: 10,
         width: 100, 
         height: 100,
+        resizeMode: 'stretch'
     },
     gallery: {
         width: '100%',
