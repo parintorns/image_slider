@@ -7,10 +7,10 @@ import {
     Image,
     Modal,
     BackHandler,
-    ScrollView
+    ScrollView,
+    Alert
 } from 'react-native'
 
-import ImageViewer from 'react-native-image-zoom-viewer'
 import Gallery from 'react-native-image-gallery'
 
 const imagesForGallery = [];
@@ -33,20 +33,15 @@ class ImageSlider extends Component {
             })
         }
         console.disableYellowBox = true;
-
-        BackHandler.addEventListener("hardwareBackPress", () => {
-            if (this.state.showModal == true) {
-                this.hideModal();
-                return false;
-            }
-            return false;
-        })
     } 
 
     render() {
         return (
             <View>
-                <ScrollView style={{flexDirection:'row', width: '100%', height: 120}} horizontal={true} showsHorizontalScrollIndicator={false}>
+                <ScrollView style={{flexDirection:'row', width: '100%', height: 120}} horizontal={true} 
+                showsHorizontalScrollIndicator={false}
+                snapToInterval={120}
+                >
                 {
                     this.props.objects.map((data, index) => {
                         console.disableYellowBox = true;
@@ -55,7 +50,7 @@ class ImageSlider extends Component {
                 }
                 </ScrollView>
 
-                <Modal visible={this.state.showModal} transparent={true}>
+                <Modal visible={this.state.showModal} transparent={true} onRequestClose={this.hideModal}>
                     <Gallery style={styles.gallery}
                         images={imagesForGallery}
                         index={this.state.selectedIndex}
