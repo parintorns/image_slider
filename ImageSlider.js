@@ -8,7 +8,8 @@ import {
     Modal,
     BackHandler,
     ScrollView,
-    Alert
+    Alert,
+    Animated
 } from 'react-native'
 
 import Gallery from 'react-native-image-gallery'
@@ -23,6 +24,8 @@ class ImageSlider extends Component {
             showModal: false,
             initialPage: 0,
         }
+
+        _scrollView : null
     }
 
     componentDidMount() {
@@ -35,12 +38,22 @@ class ImageSlider extends Component {
         console.disableYellowBox = true;
     } 
 
+    scrollHandler = (e) => {
+    //    Alert.alert("" + e.nativeEvent.contentOffset.x);
+    var index = parseInt((e.nativeEvent.contentOffset.x+60)/120, 10);
+    var posX = index * 120;
+    this._scrollView.getScrollResponder().scrollTo({x: posX, y:0, animated: true});
+    }
+
     render() {
         return (
             <View>
-                <ScrollView style={{flexDirection:'row', width: '100%', height: 120}} horizontal={true} 
+                <ScrollView ref={(view) => this._scrollView = view}
+                style={{flexDirection:'row', width: '100%', height: 120}} horizontal={true} 
                 showsHorizontalScrollIndicator={false}
-                snapToInterval={120}
+                //snapToInterval={120}
+                onScrollEndDrag={this.scrollHandler.bind(this)}
+                scrollEventThrottle={16}
                 >
                 {
                     this.props.objects.map((data, index) => {
